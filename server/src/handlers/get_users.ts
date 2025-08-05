@@ -1,9 +1,19 @@
 
+import { db } from '../db';
+import { usersTable } from '../db/schema';
 import { type User } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export async function getUsers(companyId?: number): Promise<User[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to fetch users, optionally filtered by company
-  // Used by administrators to manage all users or by recruiters to manage candidates
-  return Promise.resolve([]);
+  try {
+    // Build query conditionally without reassigning
+    const results = companyId !== undefined
+      ? await db.select().from(usersTable).where(eq(usersTable.company_id, companyId)).execute()
+      : await db.select().from(usersTable).execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    throw error;
+  }
 }

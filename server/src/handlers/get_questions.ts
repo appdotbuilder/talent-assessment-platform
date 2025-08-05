@@ -1,9 +1,19 @@
 
+import { db } from '../db';
+import { questionsTable } from '../db/schema';
 import { type Question } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export async function getQuestions(companyId: number): Promise<Question[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to fetch all questions for a specific company
-  // Used by company recruiters to manage their question bank
-  return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(questionsTable)
+      .where(eq(questionsTable.company_id, companyId))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch questions:', error);
+    throw error;
+  }
 }

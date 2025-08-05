@@ -1,9 +1,19 @@
 
+import { db } from '../db';
+import { assessmentsTable } from '../db/schema';
 import { type Assessment } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export async function getAssessments(companyId: number): Promise<Assessment[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to fetch all assessments for a company
-  // Used by company recruiters to manage their assessments
-  return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(assessmentsTable)
+      .where(eq(assessmentsTable.company_id, companyId))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Get assessments failed:', error);
+    throw error;
+  }
 }

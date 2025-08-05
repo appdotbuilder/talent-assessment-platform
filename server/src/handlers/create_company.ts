@@ -1,14 +1,22 @@
 
+import { db } from '../db';
+import { companiesTable } from '../db/schema';
 import { type CreateCompanyInput, type Company } from '../schema';
 
-export async function createCompany(input: CreateCompanyInput): Promise<Company> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to create a new company in the database
-  return Promise.resolve({
-    id: 0,
-    name: input.name,
-    domain: input.domain || null,
-    created_at: new Date(),
-    updated_at: new Date()
-  } as Company);
-}
+export const createCompany = async (input: CreateCompanyInput): Promise<Company> => {
+  try {
+    // Insert company record
+    const result = await db.insert(companiesTable)
+      .values({
+        name: input.name,
+        domain: input.domain || null
+      })
+      .returning()
+      .execute();
+
+    return result[0];
+  } catch (error) {
+    console.error('Company creation failed:', error);
+    throw error;
+  }
+};
